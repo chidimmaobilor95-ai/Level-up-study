@@ -1,5 +1,5 @@
 name: levelup_study
-description: "A gamified study app"
+description: "A gamified study app with quizzes and monetization"
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -10,7 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.6
-  google_fonts: ^6.2.1
+  url_launcher: ^6.2.5
 
 dev_dependencies:
   flutter_test:
