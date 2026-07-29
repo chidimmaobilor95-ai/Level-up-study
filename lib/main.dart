@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(const LevelUpStudyApp());
@@ -20,7 +19,6 @@ class LevelUpStudyApp extends StatelessWidget {
           secondary: Color(0xFF10B981),
           surface: Color(0xFF1E293B),
         ),
-        textTheme: GoogleFonts.poppinsTextTheme(ThemeData.dark().textTheme),
       ),
       home: const MainHomeScreen(),
     );
@@ -121,9 +119,9 @@ class _MainHomeScreenState extends State<MainHomeScreen> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF1E293B),
         elevation: 0,
-        title: Text(
+        title: const Text(
           'LevelUp Study 🚀',
-          style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
       body: SingleChildScrollView(
@@ -147,7 +145,7 @@ class _MainHomeScreenState extends State<MainHomeScreen> {
                     children: [
                       Text(
                         'Level $currentLevel Scholar 🎓',
-                        style: GoogleFonts.poppins(
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -159,7 +157,7 @@ class _MainHomeScreenState extends State<MainHomeScreen> {
                           const SizedBox(width: 4),
                           Text(
                             '$streakDays Days',
-                            style: GoogleFonts.poppins(
+                            style: const TextStyle(
                               color: Colors.amber,
                               fontWeight: FontWeight.bold,
                             ),
@@ -179,18 +177,18 @@ class _MainHomeScreenState extends State<MainHomeScreen> {
                   const SizedBox(height: 8),
                   Align(
                     alignment: Alignment.centerRight,
-                    text: Text(
+                    child: Text(
                       'Total XP: $totalXP',
-                      style: GoogleFonts.poppins(color: Colors.white70, fontSize: 13),
+                      style: const TextStyle(color: Colors.white70, fontSize: 13),
                     ),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 24),
-            Text(
+            const Text(
               'Select a Subject to Practice:',
-              style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
 
@@ -217,11 +215,11 @@ class _MainHomeScreenState extends State<MainHomeScreen> {
                   ),
                   title: Text(
                     subject,
-                    style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 16),
+                    style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
                   ),
                   subtitle: Text(
                     '${subjectQuestions[subject]!.length} Quizzes Available',
-                    style: GoogleFonts.poppins(color: Colors.white54, fontSize: 12),
+                    style: const TextStyle(color: Colors.white54, fontSize: 12),
                   ),
                   trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.white54),
                   onTap: () {
@@ -238,7 +236,7 @@ class _MainHomeScreenState extends State<MainHomeScreen> {
                   },
                 ),
               );
-            }).toList(),
+            }),
           ],
         ),
       ),
@@ -292,10 +290,10 @@ class _QuizScreenState extends State<QuizScreen> {
         barrierDismissible: false,
         builder: (context) => AlertDialog(
           backgroundColor: const Color(0xFF1E293B),
-          title: Text('Quiz Completed! 🎉', style: GoogleFonts.poppins(color: Colors.white)),
+          title: const Text('Quiz Completed! 🎉', style: TextStyle(color: Colors.white)),
           content: Text(
             'You scored $score / ${widget.questions.length}.\nYou earned +$earnedXP XP!',
-            style: GoogleFonts.poppins(color: Colors.white70),
+            style: const TextStyle(color: Colors.white70),
           ),
           actions: [
             ElevatedButton(
@@ -328,12 +326,12 @@ class _QuizScreenState extends State<QuizScreen> {
           children: [
             Text(
               'Question ${currentIndex + 1} of ${widget.questions.length}',
-              style: GoogleFonts.poppins(color: const Color(0xFF0EA5E9), fontWeight: FontWeight.bold),
+              style: const TextStyle(color: Color(0xFF0EA5E9), fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
             Text(
               currentQ.questionText,
-              style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
 
@@ -370,7 +368,7 @@ class _QuizScreenState extends State<QuizScreen> {
                         },
                   child: Text(
                     currentQ.options[index],
-                    style: GoogleFonts.poppins(color: Colors.white, fontSize: 15),
+                    style: const TextStyle(color: Colors.white, fontSize: 15),
                   ),
                 ),
               );
@@ -388,7 +386,7 @@ class _QuizScreenState extends State<QuizScreen> {
                 ),
                 child: Text(
                   'Explanation: ${currentQ.explanation}',
-                  style: GoogleFonts.poppins(color: Colors.white70, fontSize: 13),
+                  style: const TextStyle(color: Colors.white70, fontSize: 13),
                 ),
               ),
 
@@ -407,7 +405,7 @@ class _QuizScreenState extends State<QuizScreen> {
                     : (isSubmitted ? nextQuestion : submitAnswer),
                 child: Text(
                   isSubmitted ? 'Next Question' : 'Submit Answer',
-                  style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
