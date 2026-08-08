@@ -13,11 +13,11 @@ class LevelUpStudyApp extends StatelessWidget {
       title: 'LevelUp Study',
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: const Color(0xFF0F172A), // Deep void background
+        scaffoldBackgroundColor: const Color(0xFF0F172A),
         colorScheme: const ColorScheme.dark(
-          primary: Color(0xFF8B5CF6), // Neon Purple
-          secondary: Color(0xFF0EA5E9), // Electric Blue
-          surface: Color(0xFF1E1B4B), // Dark Purple Card Surface
+          primary: Color(0xFF8B5CF6),
+          secondary: Color(0xFF0EA5E9),
+          surface: Color(0xFF1E1B4B),
         ),
       ),
       home: const AuthWrapperScreen(),
@@ -41,7 +41,7 @@ class _AuthWrapperScreenState extends State<AuthWrapperScreen> {
   final TextEditingController passwordController = TextEditingController();
 
   void handleLogin() {
-    if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
+    if (emailController.text.trim().isNotEmpty && passwordController.text.trim().isNotEmpty) {
       setState(() {
         isLoggedIn = true;
       });
@@ -84,6 +84,7 @@ class _AuthWrapperScreenState extends State<AuthWrapperScreen> {
               const SizedBox(height: 32),
               TextField(
                 controller: emailController,
+                style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                   labelText: 'Email Address',
                   prefixIcon: const Icon(Icons.email, color: Color(0xFF0EA5E9)),
@@ -96,6 +97,7 @@ class _AuthWrapperScreenState extends State<AuthWrapperScreen> {
               TextField(
                 controller: passwordController,
                 obscureText: true,
+                style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                   labelText: 'Password',
                   prefixIcon: const Icon(Icons.lock, color: Color(0xFF0EA5E9)),
@@ -134,7 +136,7 @@ class _AuthWrapperScreenState extends State<AuthWrapperScreen> {
 }
 
 // -----------------------------------------------------------------------------
-// MAIN NAVIGATION HUB (TABS: STUDY, AI TUTOR, PRO & STREAK)
+// MAIN NAVIGATION HUB
 // -----------------------------------------------------------------------------
 class MainNavigationHub extends StatefulWidget {
   final String userEmail;
@@ -229,7 +231,6 @@ class StudyDashboardScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Streak Header Box
             Container(
               padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
@@ -270,7 +271,7 @@ class StudyDashboardScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text('Missed a day? Watch 30s ad to revive streak', style: TextStyle(fontSize: 11, color: Colors.white70)),
+                      const Text('Missed a day? Watch ad to revive', style: TextStyle(fontSize: 11, color: Colors.white70)),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(backgroundColor: Colors.amber, foregroundColor: Colors.black),
                         onPressed: onWatchStreakAd,
@@ -281,11 +282,9 @@ class StudyDashboardScreen extends StatelessWidget {
                 ],
               ),
             ),
-
             const SizedBox(height: 24),
             const Text('Custom Topic & Subject Selection', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
-
             SubjectTopicCard(
               subject: 'Mathematics',
               icon: Icons.calculate,
@@ -342,7 +341,7 @@ class SubjectTopicCard extends StatelessWidget {
           child: Icon(icon, color: color),
         ),
         title: Text(subject, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-        subtitle: const Text('50 Questions Per Level • Tap to Choose Topic', style: TextStyle(fontSize: 12, color: Colors.white54)),
+        subtitle: const Text('50 Questions Per Level • Select Topic', style: TextStyle(fontSize: 12, color: Colors.white54)),
         children: topics.map((topic) {
           return ListTile(
             title: Text(topic, style: const TextStyle(fontSize: 14)),
@@ -367,7 +366,7 @@ class SubjectTopicCard extends StatelessWidget {
 }
 
 // -----------------------------------------------------------------------------
-// DUOLINGO-STYLE QUIZ ENGINE (50 QUESTIONS LEVEL, LIVES, AD REVIVE)
+// EDITABLE DUOLINGO-STYLE QUIZ ENGINE (FIXED SELECTION & CHANGEABLE OPTIONS)
 // -----------------------------------------------------------------------------
 class DuolingoQuizEngineScreen extends StatefulWidget {
   final String subject;
@@ -392,17 +391,27 @@ class _DuolingoQuizEngineScreenState extends State<DuolingoQuizEngineScreen> {
   bool isSubmitted = false;
   int score = 0;
 
-  // 50 Questions Level Dynamic Data Engine
   final List<Map<String, dynamic>> levelQuestions = List.generate(50, (index) {
     return {
-      'questionText': 'Level 1 Question #${index + 1}: Solve standard practice query for ${index + 1}x + 5 = 20',
-      'options': ['x = 3', 'x = 5', 'x = 15', 'x = 20'],
-      'correct': 1,
-      'explanation': 'Subtract 5 from both sides, then divide by ${index + 1}.',
+      'questionText': 'Level 1 Question #${index + 1}: Solve for x in equation (${index + 1}x + 4 = 24)',
+      'options': ['x = ${((20) / (index + 1)).toStringAsFixed(1)}', 'x = 2', 'x = 10', 'x = 0'],
+      'correct': 0,
+      'explanation': 'Subtract 4 from both sides (20), then divide 20 by ${index + 1}.',
     };
   });
 
+  // Tapping an option updates the selection BEFORE checking answers
+  void selectOption(int index) {
+    if (!isSubmitted) {
+      setState(() {
+        selectedOption = index;
+      });
+    }
+  }
+
   void submitAnswer() {
+    if (selectedOption == null) return;
+
     setState(() {
       isSubmitted = true;
       if (selectedOption == levelQuestions[currentQuestionIndex]['correct']) {
@@ -424,7 +433,7 @@ class _DuolingoQuizEngineScreenState extends State<DuolingoQuizEngineScreen> {
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF1E1B4B),
         title: const Text('💔 Out of Lives!', style: TextStyle(color: Colors.redAccent)),
-        content: const Text('You ran out of lives on this level! Watch a 30-second ad to gain +2 Extra Lives and continue.'),
+        content: const Text('Watch a 30-second ad to restore +2 extra lives and continue!'),
         actions: [
           TextButton(
             onPressed: () {
@@ -438,7 +447,7 @@ class _DuolingoQuizEngineScreenState extends State<DuolingoQuizEngineScreen> {
             onPressed: () {
               Navigator.pop(context);
               setState(() {
-                lives = 2; // Revived with 2 lives
+                lives = 2;
               });
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('📺 Ad Watched! +2 Lives Restored!'), backgroundColor: Color(0xFF10B981)),
@@ -464,7 +473,7 @@ class _DuolingoQuizEngineScreenState extends State<DuolingoQuizEngineScreen> {
         builder: (context) => AlertDialog(
           backgroundColor: const Color(0xFF1E1B4B),
           title: const Text('🏆 Level Completed! 🎉', style: TextStyle(color: Colors.amber)),
-          content: Text('Awesome job! You completed all 50 questions in ${widget.topic}.\nScore: $score / 50'),
+          content: Text('Awesome job! You finished all 50 questions in ${widget.topic}.\nFinal Score: $score / 50'),
           actions: [
             ElevatedButton(
               onPressed: () {
@@ -487,11 +496,10 @@ class _DuolingoQuizEngineScreenState extends State<DuolingoQuizEngineScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF1E1B4B),
-        title: Text('${widget.topic} (Level 1)'),
+        title: Text('${widget.topic}'),
       ),
       body: Column(
         children: [
-          // Progress & Hearts Bar
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -499,7 +507,7 @@ class _DuolingoQuizEngineScreenState extends State<DuolingoQuizEngineScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Q ${currentQuestionIndex + 1} / 50', style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF0EA5E9))),
+                    Text('Question ${currentQuestionIndex + 1} / 50', style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF0EA5E9))),
                     Row(
                       children: List.generate(
                         3,
@@ -534,28 +542,59 @@ class _DuolingoQuizEngineScreenState extends State<DuolingoQuizEngineScreen> {
                   const SizedBox(height: 20),
 
                   ...List.generate(q['options'].length, (index) {
+                    bool isSelected = selectedOption == index;
                     Color buttonColor = const Color(0xFF1E1B4B);
-                    if (selectedOption == index) buttonColor = const Color(0xFF0EA5E9);
+                    Color borderClr = Colors.transparent;
+
+                    if (isSelected) {
+                      buttonColor = const Color(0xFF0EA5E9).withOpacity(0.3);
+                      borderClr = const Color(0xFF0EA5E9);
+                    }
+
                     if (isSubmitted) {
-                      if (index == q['correct']) buttonColor = const Color(0xFF10B981);
-                      else if (selectedOption == index) buttonColor = Colors.redAccent;
+                      if (index == q['correct']) {
+                        buttonColor = const Color(0xFF10B981).withOpacity(0.4);
+                        borderClr = const Color(0xFF10B981);
+                      } else if (isSelected && index != q['correct']) {
+                        buttonColor = Colors.redAccent.withOpacity(0.4);
+                        borderClr = Colors.redAccent;
+                      }
                     }
 
                     return Container(
-                      margin: const EdgeInsets.only(bottom: 10),
+                      margin: const EdgeInsets.only(bottom: 12),
                       width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: buttonColor,
+                      child: InkWell(
+                        onTap: () => selectOption(index),
+                        borderRadius: BorderRadius.circular(12),
+                        child: Container(
                           padding: const EdgeInsets.all(16),
-                          alignment: Alignment.centerLeft,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          decoration: BoxDecoration(
+                            color: buttonColor,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: borderClr, width: 2),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(q['options'][index], style: const TextStyle(color: Colors.white, fontSize: 16)),
+                              if (isSelected && !isSubmitted)
+                                const Icon(Icons.check_circle, color: Color(0xFF0EA5E9)),
+                            ],
+                          ),
                         ),
-                        onPressed: isSubmitted ? null : () => setState(() => selectedOption = index),
-                        child: Text(q['options'][index], style: const TextStyle(color: Colors.white, fontSize: 15)),
                       ),
                     );
                   }),
+
+                  if (!isSubmitted && selectedOption != null)
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: () => setState(() => selectedOption = null),
+                        child: const Text('Clear Choice 🔄', style: TextStyle(color: Colors.white54)),
+                      ),
+                    ),
 
                   const Spacer(),
 
@@ -574,13 +613,13 @@ class _DuolingoQuizEngineScreenState extends State<DuolingoQuizEngineScreen> {
                     height: 50,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF10B981),
+                        backgroundColor: isSubmitted ? const Color(0xFF8B5CF6) : const Color(0xFF10B981),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       ),
                       onPressed: selectedOption == null ? null : (isSubmitted ? nextQuestion : submitAnswer),
                       child: Text(
-                        isSubmitted ? 'Next Question' : 'Check Answer',
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        isSubmitted ? 'Next Question ➡️' : 'Check Answer',
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
                       ),
                     ),
                   ),
@@ -589,7 +628,6 @@ class _DuolingoQuizEngineScreenState extends State<DuolingoQuizEngineScreen> {
             ),
           ),
 
-          // Bottom Ad Placement (Hidden if Pro)
           if (!widget.isPro)
             Container(
               width: double.infinity,
@@ -606,7 +644,7 @@ class _DuolingoQuizEngineScreenState extends State<DuolingoQuizEngineScreen> {
 }
 
 // -----------------------------------------------------------------------------
-// INBUILT AI TUTOR (MATH & CHEMISTRY SOLVER)
+// INBUILT AI TUTOR (EDITABLE INPUT FIELD)
 // -----------------------------------------------------------------------------
 class AITutorScreen extends StatefulWidget {
   final bool isPro;
@@ -628,16 +666,14 @@ class _AITutorScreenState extends State<AITutorScreen> {
       aiResponse = '';
     });
 
-    // Simulated Offline/Inbuilt Step-by-Step AI Solver
     Future.delayed(const Duration(seconds: 2), () {
       setState(() {
         isLoading = false;
         aiResponse = "🧠 **LevelUp AI Step-by-Step Solution:**\n\n"
-            "**Problem:** ${promptController.text}\n\n"
-            "1. **Identify Given Data:** Isolate key variables in the formula.\n"
-            "2. **Apply Core Formula:** Substitute values into the equation.\n"
-            "3. **Final Calculation:** Simplifies to the exact verified answer!\n\n"
-            "💡 *Tip: Check your units (SI Units) when submitting in exams!*";
+            "**Question:** ${promptController.text}\n\n"
+            "1. **Breakdown:** Identify the primary variables.\n"
+            "2. **Formula:** Apply standard exam calculation rules.\n"
+            "3. **Result:** Verified step-by-step solution completed!";
       });
     });
   }
@@ -653,34 +689,19 @@ class _AITutorScreenState extends State<AITutorScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: const Color(0xFF1E1B4B),
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: const Color(0xFF8B5CF6).withOpacity(0.4)),
-              ),
-              child: const Row(
-                children: [
-                  Icon(Icons.auto_awesome, color: Color(0xFF8B5CF6)),
-                  SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      'Ask any Math, Chemistry, or Physics question for step-by-step solutions!',
-                      style: TextStyle(fontSize: 12, color: Colors.white70),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
             TextField(
               controller: promptController,
               maxLines: 3,
+              style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
-                hintText: 'Type or paste question here (e.g., Solve 3x^2 + 5x - 2 = 0)...',
+                hintText: 'Type or edit your question here...',
+                hintStyle: const TextStyle(color: Colors.white38),
                 filled: true,
                 fillColor: const Color(0xFF1E1B4B),
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.clear, color: Colors.white54),
+                  onPressed: () => promptController.clear(),
+                ),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
@@ -707,7 +728,7 @@ class _AITutorScreenState extends State<AITutorScreen> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    aiResponse.isEmpty ? 'Your AI step-by-step breakdown will appear here.' : aiResponse,
+                    aiResponse.isEmpty ? 'Your AI breakdown will appear here.' : aiResponse,
                     style: const TextStyle(color: Colors.white87, height: 1.4),
                   ),
                 ),
@@ -721,7 +742,7 @@ class _AITutorScreenState extends State<AITutorScreen> {
 }
 
 // -----------------------------------------------------------------------------
-// PRO SUBSCRIPTION ($9.99/MO & MOM'S PAYMENT GATEWAY PASS)
+// PRO SUBSCRIPTION
 // -----------------------------------------------------------------------------
 class ProSubscriptionScreen extends StatelessWidget {
   final bool isPro;
@@ -752,7 +773,6 @@ class ProSubscriptionScreen extends StatelessWidget {
               style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Color(0xFF10B981)),
             ),
             const SizedBox(height: 24),
-
             const Align(
               alignment: Alignment.centerLeft,
               child: Column(
@@ -768,9 +788,7 @@ class ProSubscriptionScreen extends StatelessWidget {
                 ],
               ),
             ),
-
             const Spacer(),
-
             SizedBox(
               width: double.infinity,
               height: 52,
