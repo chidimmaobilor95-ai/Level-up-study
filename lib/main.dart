@@ -366,7 +366,7 @@ class SubjectTopicCard extends StatelessWidget {
 }
 
 // -----------------------------------------------------------------------------
-// EDITABLE DUOLINGO-STYLE QUIZ ENGINE (FIXED SELECTION & CHANGEABLE OPTIONS)
+// QUIZ ENGINE SCREEN
 // -----------------------------------------------------------------------------
 class DuolingoQuizEngineScreen extends StatefulWidget {
   final String subject;
@@ -391,16 +391,16 @@ class _DuolingoQuizEngineScreenState extends State<DuolingoQuizEngineScreen> {
   bool isSubmitted = false;
   int score = 0;
 
-  final List<Map<String, dynamic>> levelQuestions = List.generate(50, (index) {
+  late final List<Map<String, dynamic>> levelQuestions = List.generate(50, (i) {
+    int num = i + 1;
     return {
-      'questionText': 'Level 1 Question #${index + 1}: Solve for x in equation (${index + 1}x + 4 = 24)',
-      'options': ['x = ${((20) / (index + 1)).toStringAsFixed(1)}', 'x = 2', 'x = 10', 'x = 0'],
+      'questionText': 'Question #$num: Solve for x when $num x + 4 = ${num * 2 + 4}',
+      'options': ['x = 2', 'x = 4', 'x = 6', 'x = 0'],
       'correct': 0,
-      'explanation': 'Subtract 4 from both sides (20), then divide 20 by ${index + 1}.',
+      'explanation': 'Subtract 4 from both sides ($num x = ${num * 2}), then divide by $num to get x = 2.',
     };
   });
 
-  // Tapping an option updates the selection BEFORE checking answers
   void selectOption(int index) {
     if (!isSubmitted) {
       setState(() {
@@ -496,7 +496,7 @@ class _DuolingoQuizEngineScreenState extends State<DuolingoQuizEngineScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF1E1B4B),
-        title: Text('${widget.topic}'),
+        title: Text(widget.topic),
       ),
       body: Column(
         children: [
@@ -634,7 +634,7 @@ class _DuolingoQuizEngineScreenState extends State<DuolingoQuizEngineScreen> {
               height: 48,
               color: const Color(0xFF1E1B4B),
               child: const Center(
-                child: Text('AD BANNER • Watch Ads or Upgrade to Pro ($9.99/mo)', style: TextStyle(color: Colors.white54, fontSize: 11)),
+                child: Text('AD BANNER • Watch Ads or Upgrade to Pro (\$9.99/mo)', style: TextStyle(color: Colors.white54, fontSize: 11)),
               ),
             ),
         ],
@@ -644,7 +644,7 @@ class _DuolingoQuizEngineScreenState extends State<DuolingoQuizEngineScreen> {
 }
 
 // -----------------------------------------------------------------------------
-// INBUILT AI TUTOR (EDITABLE INPUT FIELD)
+// INBUILT AI TUTOR
 // -----------------------------------------------------------------------------
 class AITutorScreen extends StatefulWidget {
   final bool isPro;
