@@ -25,6 +25,10 @@ jobs:
         with:
           channel: 'stable'
 
+      # Automatically creates missing android platform files if they were deleted/omitted
+      - name: Re-create Android Platform Files
+        run: flutter create . --platforms=android
+
       - name: Get Dependencies
         run: flutter pub get
 
