@@ -1,14 +1,20 @@
 name: Build Android APK
 
-on: [push]
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
-      - name: Set up Java 17
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java JDK
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
@@ -19,17 +25,14 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Generate Android Project Files
-        run: flutter create --platforms=android .
-
-      - name: Install Dependencies
+      - name: Get Dependencies
         run: flutter pub get
 
-      - name: Build Release APK
-        run: flutter build apk --release --no-tree-shake-icons
+      - name: Build APK
+        run: flutter build apk --release
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: release-apk
+          name: LevelUp-Study-APK
           path: build/app/outputs/flutter-apk/app-release.apk
